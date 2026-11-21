@@ -17,18 +17,20 @@ jobs:
 
       - name: Projeyi aç
         run: |
-          ls -la
           ZIP=$(ls *.zip | head -n 1)
           echo "Bulunan zip: $ZIP"
           python3 -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1]).extractall('src')" "$ZIP"
-          ls -R src | head -40
 
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
 
-      - uses: android-actions/setup-android@v3
+      - name: Android SDK hazırla
+        run: |
+          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKM" --licenses > /dev/null || true
+          "$SDKM" "platforms;android-35" "build-tools;34.0.0" > /dev/null || true
 
       - uses: gradle/actions/setup-gradle@v4
         with:
