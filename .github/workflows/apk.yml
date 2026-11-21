@@ -14,11 +14,13 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Projeyi aç
         run: |
-          ZIP=$(ls *.zip | head -n 1)
-          echo "Bulunan zip: $ZIP"
+          ZIP=$(git log -1 --diff-filter=AM --name-only --pretty=format: -- '*.zip' | grep -v '^$' | head -n 1)
+          echo "En son yüklenen zip: $ZIP"
           python3 -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1]).extractall('src')" "$ZIP"
 
       - uses: actions/setup-java@v5
